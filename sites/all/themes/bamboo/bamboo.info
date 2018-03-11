@@ -1,0 +1,17 @@
+name = Bamboo
+description = This is a sub-theme of theme stark.
+core = 7.x
+base theme = bootstrap
+
+stylesheets[all][] = css/style.css
+scripts[] = js/script.js
+
+
+; Regions
+regions[header] = Header
+regions[highlighted] = Highlighted
+regions[help] = Help
+regions[content] = Content
+regions[sidebar_first] = Left sidebar
+regions[sidebar_second] = Right sidebar
+regions[footer] = Footer
