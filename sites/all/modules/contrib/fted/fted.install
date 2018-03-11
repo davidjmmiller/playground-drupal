@@ -1,0 +1,40 @@
+<?php
+
+function fted_schema() {
+  
+  drupal_load('module', 'fted');
+  $schema = _fted_get_all_schema();
+  $schema['fted_metadata'] = array(
+    'description' => 'Stores all fted table informations',
+    'fields' => array(
+      'id'  => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique order data ID.',
+      ),
+      'entity_type' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'description' => "Entity type",
+      ),
+	  
+      'bundle' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'description' => "Bundle name",
+      ),
+
+      'fields' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'description' => "Serilized field info of the",
+      ), 
+    ),
+
+    'primary key' => array('id'),
+
+  );
+
+  return $schema;
+}
+

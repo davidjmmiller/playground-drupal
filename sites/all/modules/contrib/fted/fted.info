@@ -1,0 +1,10 @@
+name = Flat Table Entity data
+description = Stores entity data in single row, Helpfull for site performance. 
+core = 7.x 
+version = 7.x
+; Information added by Drupal.org packaging script on 2016-04-18
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "fted"
+datestamp = "1461008498"
+

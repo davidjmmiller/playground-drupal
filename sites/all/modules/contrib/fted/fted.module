@@ -1,0 +1,156 @@
+<?php
+// Developed be @adalquardz
+
+module_load_include('inc', 'fted', 'fted');
+module_load_include('inc', 'fted', 'fted.admin');
+
+
+function fted_menu() {
+  $items = array();
+  $items['admin/config/fted'] = array(
+    'title' => 'Flat Table Entity data',
+    'description' => 'Select list of entities to enable flat table storage',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fted_settings_entities'),
+    'access arguments' => array('administer my module'),  
+    'access callback' => TRUE,
+  );
+    $items['admin/config/fted/entities'] = array(
+        'title' => 'Entities',
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => -10
+    );
+    $items['admin/config/fted/settings'] = array(
+        'title' => 'Settings',
+        'type' => MENU_LOCAL_TASK,
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('fted_settings'),
+        'weight' => -9,
+        'access arguments' => array('administer my module'),  
+    );
+    $entites = variable_get('fted_entities');
+    $weight = -8;
+    foreach ($entites as $entity_key => $entity) {
+    if($entity == $entity_key && $entity != '0') {
+     $items['admin/config/fted/' . $entity] = array(
+        'title' => $entity,
+        'type' => MENU_LOCAL_TASK,
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('fted_settings_bundles', $entity),
+        'weight' => -7,
+        'access arguments' => array('administer my module'),  
+     ); 
+     }
+    }
+  return $items;
+}
+
+
+//get list of all items yet to cache.
+function fted_get_all_pending_items() {
+  $fted_entities = variable_get('fted_entities');
+  $enabled_entities = array();
+  foreach($fted_entities as $fted_entity_key => $fted_entity) {
+    if($fted_entity == $fted_entity_key && $fted_entity != '0') {
+     $enabled_entities[$fted_entity] = 'fted_entity_' . $fted_entity;
+    }
+  }
+  $enabled_bundles = array();
+  foreach($enabled_entities as $entity => $entity_variable) {
+    $bundles = variable_get($entity_variable);
+    foreach($bundles as $bundle_key => $bundle) {
+      if($bundle_key == $bundle && $bundle != '0') {
+        $items = _fted_get_flat_pending_entities($entity, $bundle_key);
+        $enabled_bundles[$entity][$bundle_key] = count($items);
+      }  
+    }
+  }
+  return  $enabled_bundles;
+}
+
+function fted_cron() {
+  $items_to_run = variable_get('fted_cron_entities', 10);
+  $pending_items  = fted_get_all_pending_items();
+  $count = 0;
+  foreach ($pending_items as $entity_type => $entity) {
+    foreach ($entity as $bundle => $pending) {
+      if($pending) {
+        _fted_build_for_bundle($entity_type, $bundle, $items_to_run);
+      }
+    }
+  }
+}
+
+//
+
+/**
+ * @param $entity
+ * @param $type
+ */
+function fted_entity_insert($entity, $type) {
+  drupal_register_shutdown_function('_hook_fted_post_save', $entity, $type, 'insert');
+}
+
+/**
+ * @param $entity
+ * @param $type
+ */
+function fted_entity_update($entity, $type) {
+  drupal_register_shutdown_function('_hook_fted_post_save', $entity, $type, 'update');
+}
+
+/**
+ * @param $entity
+ * @param $type
+ */
+function fted_entity_delete($entity, $type) {
+  drupal_register_shutdown_function('_hook_fted_post_save', $entity, $type, 'delete');
+}
+
+/**
+ * @param $entity
+ * @param $type
+ * @param $op
+ */
+function _hook_fted_post_save($entity, $type, $op) {
+  $entity_is_saved = FALSE;
+  $new_entity = NULL;
+
+  if ($op == 'insert' || $op == 'update') {
+    $entity_is_saved = TRUE;
+  }
+  if ($op == 'delete') {
+    list($id) = entity_extract_ids($type, $entity);
+    $new_entity = entity_load($type, array($id));
+    if (!$new_entity) {
+      $entity_is_saved = TRUE;
+    }
+  }
+  if ($entity_is_saved) {
+    module_invoke_all('entity_post' . $op, $entity, $type);
+    module_invoke_all('entity_postsave', $entity, $type, $op);
+
+    if ($type == 'node') {
+      module_invoke_all('node_post' . $op, $entity);
+      module_invoke_all('node_postsave', $entity, $op);
+    }
+  }
+}
+
+// hook post update
+function fted_entity_postupdate($entity, $entity_type) {
+  _fted_entity_delete_insert($entity, $entity_type);
+}
+
+//Hook post delete
+function fted_entity_postdelete($entity, $entity_type) {
+  _fted_entity_delete($entity, $entity_type);
+} 
+
+
+//hook post insert
+function fted_entity_postinsert($entity, $entity_type) {
+  _fted_entity_insert($entity, $entity_type);
+}
+
+
