@@ -249,8 +249,8 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'bamboo_playground_drupal',
-      'username' => 'root',
+      'database' => 'drup_playground',
+      'username' => 'drup_playground',
       'password' => 'David88',
       'host' => 'localhost',
       'port' => '',
