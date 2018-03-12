@@ -1,0 +1,27 @@
+/* Login/password page */
+.not-logged-in.page-user {
+    background: url(../img/skynight.jpg) center center;
+}
+.not-logged-in.page-user .breadcrumb {
+    display: none;
+}
+
+.not-logged-in.page-user #navbar,
+.not-logged-in.page-user .main-container {
+    max-width: 500px;
+}
+
+.not-logged-in.page-user .page-header,
+.not-logged-in.page-user .page-header {
+    display: none;
+}
+.not-logged-in.page-user .navbar-header,
+.not-logged-in.page-user .logo,
+.not-logged-in.page-user .logo img {
+    max-width: 100%;
+    width: auto;
+    float: none !important;
+    margin: 0 auto;
+    display: block;
+    padding: 0;
+}
