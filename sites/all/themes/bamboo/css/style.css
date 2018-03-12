@@ -1,7 +1,8 @@
 /* Login/password page */
 .not-logged-in.page-user {
-    background: url(../img/skynight.jpg) no-repeat;
+    background: url(../img/skynight.jpg);
     background-size: cover;
+    background-repeat: no-repeat;
 }
 .not-logged-in.page-user .breadcrumb {
     display: none;
