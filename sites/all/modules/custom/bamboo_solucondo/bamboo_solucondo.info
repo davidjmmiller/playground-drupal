@@ -1,0 +1,5 @@
+name = Solucondo Rest Service
+description = Extract all the information for the mobile app
+package = Bamboo
+core = 7.x
+;files[] = page_example.test

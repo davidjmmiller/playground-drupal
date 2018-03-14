@@ -250,7 +250,7 @@ $databases = array (
     'default' => 
     array (
       'database' => 'drup_playground',
-      'username' => 'drup_playground',
+      'username' => 'root',
       'password' => 'David88',
       'host' => 'localhost',
       'port' => '',
@@ -629,7 +629,7 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  *
  * Remove the leading hash sign to enable.
  */
-# $conf['theme_debug'] = TRUE;
+$conf['theme_debug'] = TRUE;
 
 /**
  * CSS identifier double underscores allowance:
